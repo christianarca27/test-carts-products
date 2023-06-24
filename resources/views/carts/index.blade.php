@@ -3,6 +3,8 @@
 @section('content')
     <main>
         <div class="container">
+            <h1>Carrelli</h1>
+
             <table class="table">
                 <thead>
                     <tr>
