@@ -14,7 +14,9 @@ class CartController extends Controller
      */
     public function index()
     {
-        //
+        $carts = Cart::all();
+
+        return view('carts.index', compact('carts'));
     }
 
     /**
@@ -46,7 +48,7 @@ class CartController extends Controller
      */
     public function show(Cart $cart)
     {
-        //
+        return view('carts.show', compact('cart'));
     }
 
     /**
