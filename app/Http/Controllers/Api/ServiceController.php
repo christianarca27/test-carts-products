@@ -11,7 +11,14 @@ class ServiceController extends Controller
 {
     public function newCart(Request $request)
     {
-        $formData = $request->all();
+        if ($request->has('products')) {
+            $formData = $request->all();
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Parametri non validi.',
+            ]);
+        }
 
         $validProducts = [];
         foreach ($formData['products'] as $product) {
@@ -42,7 +49,14 @@ class ServiceController extends Controller
 
     public function addProduct(Request $request)
     {
-        $formData = $request->all();
+        if ($request->has('cart') && $request->has('product')) {
+            $formData = $request->all();
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Parametri non validi.',
+            ]);
+        }
 
         $cart = Cart::where('id', $formData['cart'])->first();
         if (!$cart) {
