@@ -21,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('newCart', [ServiceController::class, 'newCart']);
 Route::get('addProduct', [ServiceController::class, 'addProduct']);
+Route::get('getCarts', [ServiceController::class, 'getCarts']);
