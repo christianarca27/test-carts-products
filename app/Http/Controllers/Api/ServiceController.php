@@ -81,6 +81,48 @@ class ServiceController extends Controller
         ]);
     }
 
+    public function deleteProduct(Request $request)
+    {
+        if ($request->has('cart') && $request->has('product')) {
+            $formData = $request->all();
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Parametri non validi.',
+            ]);
+        }
+
+        $cart = Cart::where('id', $formData['cart'])->first();
+        if (!$cart) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Carrello non esistente.',
+            ]);
+        }
+
+        $product = Product::where('id', $formData['product'])->first();
+        if (!$product) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Prodotto non esistente.',
+            ]);
+        }
+
+        if ($cart->products->contains($product)) {
+            $cart->products()->detach($product);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Prodotto aggiunto con successo.',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Prodotto non presente nel carrello.',
+            ]);
+        }
+    }
+
     public function getCarts()
     {
         $carts = Cart::with('products')->get();
