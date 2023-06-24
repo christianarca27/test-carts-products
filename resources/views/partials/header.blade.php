@@ -11,7 +11,7 @@
                     <a class="nav-link" href="{{ route('carts.index') }}">Carrelli</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Prodotti</a>
+                    <a class="nav-link" href="{{ route('products.index') }}">Prodotti</a>
                 </li>
             </ul>
         </div>
