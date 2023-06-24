@@ -66,4 +66,14 @@ class ServiceController extends Controller
             'message' => 'Prodotto aggiunto con successo.',
         ]);
     }
+
+    public function getCarts()
+    {
+        $carts = Cart::with('products')->get();
+
+        return response()->json([
+            'success' => true,
+            'carts' => $carts,
+        ]);
+    }
 }
