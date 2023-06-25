@@ -12,14 +12,16 @@
                         <th scope="col">ID</th>
                         <th scope="col">Nome</th>
                         <th scope="col">Prezzo</th>
+                        <th scope="col">Quantità</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($cart->products as $product)
+                    @foreach ($cart->products()->withTrashed()->get() as $product)
                         <tr>
                             <td>{{ $product->id }}</td>
                             <td>{{ $product->name }}</td>
                             <td>€ {{ $product->price }}</td>
+                            <td>{{ $product->pivot->quantity }}</td>
                         </tr>
                     @endforeach
                 </tbody>

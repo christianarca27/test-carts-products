@@ -51,6 +51,18 @@ class ServiceController extends Controller
     {
         if ($request->has('cart') && $request->has('product')) {
             $formData = $request->all();
+
+            if ($request->has('quantity')) {
+                $quantityToAdd = $formData['quantity'];
+                if ($quantityToAdd < 1) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Parametri non validi.',
+                    ]);
+                }
+            } else {
+                $quantityToAdd = 1;
+            }
         } else {
             return response()->json([
                 'success' => false,
@@ -74,7 +86,15 @@ class ServiceController extends Controller
             ]);
         }
 
-        $cart->products()->attach($product);
+        // controllo se è già stato aggiunto un prodotto di tipo $product
+        if ($cart->products->contains($product)) {
+            // in caso affermativo incremento solo la quantità
+            $cart->products()->wherePivot('product_id', $product->id)->increment('quantity', $quantityToAdd);
+        } else {
+            // altrimenti aggiungo il record
+            $cart->products()->attach($product, ['quantity' => $quantityToAdd]);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Prodotto aggiunto con successo.',
@@ -85,6 +105,18 @@ class ServiceController extends Controller
     {
         if ($request->has('cart') && $request->has('product')) {
             $formData = $request->all();
+
+            if ($request->has('quantity')) {
+                $quantityToRemove = $formData['quantity'];
+                if ($quantityToRemove < 1) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Parametri non validi.',
+                    ]);
+                }
+            } else {
+                $quantityToRemove = 1;
+            }
         } else {
             return response()->json([
                 'success' => false,
@@ -109,12 +141,20 @@ class ServiceController extends Controller
         }
 
         if ($cart->products->contains($product)) {
-            $cart->products()->detach($product);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Prodotto aggiunto con successo.',
-            ]);
+            $selectedProduct = $cart->products()->wherePivot('product_id', $product->id)->first();
+            if ($selectedProduct->pivot->quantity > $quantityToRemove) {
+                $selectedProduct->pivot->decrement('quantity', $quantityToRemove);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Quantita decrementata con successo con successo.',
+                ]);
+            } else {
+                $cart->products()->detach($product);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Prodotto rimosso con successo.',
+                ]);
+            }
         } else {
             return response()->json([
                 'success' => false,
