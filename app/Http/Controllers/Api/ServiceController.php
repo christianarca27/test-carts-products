@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Product;
+use DateTime;
 use Illuminate\Http\Request;
 
 class ServiceController extends Controller
@@ -36,7 +37,8 @@ class ServiceController extends Controller
             }
 
             $myfile = fopen("storage/newCarts.txt", "a");
-            $txt = "Carrello [" . $newCart->id . "] creato con successo.\n";
+            $datetime = new DateTime();
+            $txt = $datetime->format('r') . " - " . "Carrello [" . $newCart->id . "] creato con successo.\n";
             fwrite($myfile, $txt);
             fclose($myfile);
 
@@ -101,7 +103,8 @@ class ServiceController extends Controller
         }
 
         $myfile = fopen("storage/editCarts.txt", "a");
-        $txt = "Carrello [" . $cart->id . "] modificato con successo, aggiunti " . $quantityToAdd . " x " . "prodotto [" . $product->id . "]\n";
+        $datetime = new DateTime();
+        $txt = $datetime->format('r') . " - " . "Carrello [" . $cart->id . "] modificato con successo, aggiunti " . $quantityToAdd . " x " . "prodotto [" . $product->id . "]\n";
         fwrite($myfile, $txt);
         fclose($myfile);
 
@@ -152,11 +155,12 @@ class ServiceController extends Controller
 
         if ($cart->products->contains($product)) {
             $selectedProduct = $cart->products()->wherePivot('product_id', $product->id)->first();
+            $datetime = new DateTime();
             if ($selectedProduct->pivot->quantity > $quantityToRemove) {
                 $selectedProduct->pivot->decrement('quantity', $quantityToRemove);
 
                 $myfile = fopen("storage/editCarts.txt", "a");
-                $txt = "Carrello [" . $cart->id . "] modificato con successo, rimossi " . $quantityToRemove . " x " . "prodotto [" . $product->id . "]\n";
+                $txt = $datetime . " - " . "Carrello [" . $cart->id . "] modificato con successo, rimossi " . $quantityToRemove . " x " . "prodotto [" . $product->id . "]\n";
                 fwrite($myfile, $txt);
                 fclose($myfile);
 
@@ -166,7 +170,7 @@ class ServiceController extends Controller
                 ]);
             } else {
                 $myfile = fopen("storage/editCarts.txt", "a");
-                $txt = "Carrello [" . $cart->id . "] modificato con successo, rimossi " . $selectedProduct->pivot->quantity . " x " . "prodotto [" . $product->id . "]\n";
+                $txt = $datetime->format('r') . " - " . "Carrello [" . $cart->id . "] modificato con successo, rimossi " . $selectedProduct->pivot->quantity . " x " . "prodotto [" . $product->id . "]\n";
                 fwrite($myfile, $txt);
                 fclose($myfile);
 
