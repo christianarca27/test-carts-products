@@ -160,7 +160,7 @@ class ServiceController extends Controller
                 $selectedProduct->pivot->decrement('quantity', $quantityToRemove);
 
                 $myfile = fopen("storage/editCarts.txt", "a");
-                $txt = $datetime . " - " . "Carrello [" . $cart->id . "] modificato con successo, rimossi " . $quantityToRemove . " x " . "prodotto [" . $product->id . "]\n";
+                $txt = $datetime->format('r') . " - " . "Carrello [" . $cart->id . "] modificato con successo, rimossi " . $quantityToRemove . " x " . "prodotto [" . $product->id . "]\n";
                 fwrite($myfile, $txt);
                 fclose($myfile);
 
