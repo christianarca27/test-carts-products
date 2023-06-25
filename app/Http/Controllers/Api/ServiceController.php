@@ -74,7 +74,15 @@ class ServiceController extends Controller
             ]);
         }
 
-        $cart->products()->attach($product);
+        // controllo se è già stato aggiunto un prodotto di tipo $randomProduct
+        if ($cart->products()->wherePivot('product_id', $product->id)->exists()) {
+            // in caso affermativo incremento solo la quantità
+            $cart->products()->wherePivot('product_id', $product->id)->increment('quantity');
+        } else {
+            // altrimenti aggiungo il record
+            $cart->products()->attach($product);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Prodotto aggiunto con successo.',
