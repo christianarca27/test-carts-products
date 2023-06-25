@@ -35,6 +35,11 @@ class ServiceController extends Controller
                 $newCart->products()->attach($product);
             }
 
+            $myfile = fopen("storage/newCarts.txt", "a");
+            $txt = "Carrello [" . $newCart->id . "] creato con successo.\n";
+            fwrite($myfile, $txt);
+            fclose($myfile);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Carrello creato con successo.',
@@ -95,6 +100,11 @@ class ServiceController extends Controller
             $cart->products()->attach($product, ['quantity' => $quantityToAdd]);
         }
 
+        $myfile = fopen("storage/editCarts.txt", "a");
+        $txt = "Carrello [" . $cart->id . "] modificato con successo, aggiunti " . $quantityToAdd . " x " . "prodotto [" . $product->id . "]\n";
+        fwrite($myfile, $txt);
+        fclose($myfile);
+
         return response()->json([
             'success' => true,
             'message' => 'Prodotto aggiunto con successo.',
@@ -144,11 +154,22 @@ class ServiceController extends Controller
             $selectedProduct = $cart->products()->wherePivot('product_id', $product->id)->first();
             if ($selectedProduct->pivot->quantity > $quantityToRemove) {
                 $selectedProduct->pivot->decrement('quantity', $quantityToRemove);
+
+                $myfile = fopen("storage/editCarts.txt", "a");
+                $txt = "Carrello [" . $cart->id . "] modificato con successo, rimossi " . $quantityToRemove . " x " . "prodotto [" . $product->id . "]\n";
+                fwrite($myfile, $txt);
+                fclose($myfile);
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Quantita decrementata con successo con successo.',
                 ]);
             } else {
+                $myfile = fopen("storage/editCarts.txt", "a");
+                $txt = "Carrello [" . $cart->id . "] modificato con successo, rimossi " . $selectedProduct->pivot->quantity . " x " . "prodotto [" . $product->id . "]\n";
+                fwrite($myfile, $txt);
+                fclose($myfile);
+
                 $cart->products()->detach($product);
                 return response()->json([
                     'success' => true,
