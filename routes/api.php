@@ -19,7 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('newCart', [ServiceController::class, 'newCart']);
-Route::get('addProduct', [ServiceController::class, 'addProduct']);
-Route::get('deleteProduct', [ServiceController::class, 'deleteProduct']);
-Route::get('getCarts', [ServiceController::class, 'getCarts']);
+Route::middleware('apiToken')->group(function () {
+    Route::get('newCart', [ServiceController::class, 'newCart']);
+    Route::get('addProduct', [ServiceController::class, 'addProduct']);
+    Route::get('deleteProduct', [ServiceController::class, 'deleteProduct']);
+    Route::get('getCarts', [ServiceController::class, 'getCarts']);
+});
